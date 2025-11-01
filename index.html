@@ -21,8 +21,153 @@
 		</script>
 	</head>
 	<body>
-		<!-- Canvas is necessary to hold a scene  -->
+		<!-- Canvas element where Three.js will render the 3D scene -->
 		<canvas id="background"></canvas>
+		
+		<!-- UI Control Panel - Fixed position in top right corner -->
+		<div id="controls-panel">
+			
+			<!-- Format Switching Buttons - Toggle between GLTF and GLB -->
+			<div class="format-switch">
+				<button id="gltf-btn" class="format-btn active">GLTF</button>
+				<button id="glb-btn" class="format-btn">GLB</button>
+			</div>
+			
+			<!-- Statistics Panel - Shows performance and geometry comparison -->
+			<div id="stats-panel">
+				<h3>Model Statistics</h3>
+				
+				<!-- Two-column layout comparing GLTF vs GLB -->
+				<div class="stats-comparison">
+					
+					<!-- GLTF Statistics Column -->
+					<div class="stat-column">
+						<h4>GLTF</h4>
+						<div class="stat-item">
+							<span class="stat-label">Load Time:</span>
+							<span id="gltf-loadtime" class="stat-value">-</span>
+						</div>
+						<div class="stat-item">
+							<span class="stat-label">File Size:</span>
+							<span id="gltf-filesize" class="stat-value">-</span>
+						</div>
+						<div class="stat-item">
+							<span class="stat-label">Vertices:</span>
+							<span id="gltf-vertices" class="stat-value">-</span>
+						</div>
+						<div class="stat-item">
+							<span class="stat-label">Triangles:</span>
+							<span id="gltf-triangles" class="stat-value">-</span>
+						</div>
+						<div class="stat-item">
+							<span class="stat-label">Meshes:</span>
+							<span id="gltf-meshes" class="stat-value">-</span>
+						</div>
+					</div>
+					
+					<!-- GLB Statistics Column -->
+					<div class="stat-column">
+						<h4>GLB</h4>
+						<div class="stat-item">
+							<span class="stat-label">Load Time:</span>
+							<span id="glb-loadtime" class="stat-value">-</span>
+						</div>
+						<div class="stat-item">
+							<span class="stat-label">File Size:</span>
+							<span id="glb-filesize" class="stat-value">-</span>
+						</div>
+						<div class="stat-item">
+							<span class="stat-label">Vertices:</span>
+							<span id="glb-vertices" class="stat-value">-</span>
+						</div>
+						<div class="stat-item">
+							<span class="stat-label">Triangles:</span>
+							<span id="glb-triangles" class="stat-value">-</span>
+						</div>
+						<div class="stat-item">
+							<span class="stat-label">Meshes:</span>
+							<span id="glb-meshes" class="stat-value">-</span>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Format Information - Explains differences between formats -->
+				<div class="format-info">
+					<p><strong>GLTF:</strong> Text-based JSON format, easier to edit, larger file size</p>
+					<p><strong>GLB:</strong> Binary format, faster to load, smaller file size</p>
+				</div>
+			</div>
+			
+			<!-- Lighting Controls Panel - Manual adjustment of scene lighting -->
+			<div id="lighting-panel">
+				<h3>Lighting Controls</h3>
+				
+				<!-- Ambient Light Section - Soft, non-directional lighting -->
+				<div class="light-section">
+					<h4>Ambient Light</h4>
+					
+					<!-- Intensity slider (0 to 2) -->
+					<div class="control-group">
+						<label for="ambient-intensity">Intensity:</label>
+						<input type="range" id="ambient-intensity" min="0" max="2" step="0.1" value="0.5">
+						<span id="ambient-intensity-value">0.5</span>
+					</div>
+					
+					<!-- Color picker for ambient light -->
+					<div class="control-group">
+						<label for="ambient-color">Color:</label>
+						<input type="color" id="ambient-color" value="#ffffff">
+					</div>
+				</div>
+				
+				<!-- Directional Light Section - Simulates sunlight with shadows -->
+				<div class="light-section">
+					<h4>Directional Light</h4>
+					
+					<!-- Intensity slider (0 to 3) -->
+					<div class="control-group">
+						<label for="directional-intensity">Intensity:</label>
+						<input type="range" id="directional-intensity" min="0" max="3" step="0.1" value="1">
+						<span id="directional-intensity-value">1.0</span>
+					</div>
+					
+					<!-- Color picker for directional light -->
+					<div class="control-group">
+						<label for="directional-color">Color:</label>
+						<input type="color" id="directional-color" value="#ffffff">
+					</div>
+					
+					<!-- 3D Position Controls (X, Y, Z axes) -->
+					<div class="control-group">
+						<label>Position:</label>
+						<div class="position-controls">
+							<!-- X-axis: Left/Right position (-10 to 10) -->
+							<div class="axis-control">
+								<span>X:</span>
+								<input type="range" id="light-pos-x" min="-10" max="10" step="0.5" value="5">
+								<span id="light-pos-x-value">5</span>
+							</div>
+							<!-- Y-axis: Up/Down position (-10 to 10) -->
+							<div class="axis-control">
+								<span>Y:</span>
+								<input type="range" id="light-pos-y" min="-10" max="10" step="0.5" value="5">
+								<span id="light-pos-y-value">5</span>
+							</div>
+							<!-- Z-axis: Forward/Back position (-10 to 10) -->
+							<div class="axis-control">
+								<span>Z:</span>
+								<input type="range" id="light-pos-z" min="-10" max="10" step="0.5" value="5">
+								<span id="light-pos-z-value">5</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Reset Button - Restore default lighting values -->
+				<button id="reset-lighting" class="reset-btn">Reset to Default</button>
+			</div>
+		</div>
+		
 		<script type="module" src="/public/src/main.js"></script>
 	</body>
 </html>

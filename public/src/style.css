@@ -1,5 +1,268 @@
+/* ===== CANVAS STYLING ===== */
+/* Full-screen canvas for Three.js rendering */
 canvas {
     position: fixed;
     top: 0;
     left: 0;
-};
+}
+
+/* ===== CONTROL PANEL CONTAINER ===== */
+/* Fixed position UI panel in top-right corner with glassmorphism effect */
+#controls-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.85); /* Semi-transparent black */
+    padding: 20px;
+    border-radius: 12px;
+    color: white;
+    font-family: 'Arial', sans-serif;
+    min-width: 320px;
+    max-width: 400px;
+    max-height: calc(100vh - 40px); /* Leave 40px margin from viewport */
+    overflow-y: auto; /* Enable scrolling for long content */
+    backdrop-filter: blur(10px); /* Glassmorphism blur effect */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    z-index: 1000; /* Ensure panel stays on top */
+}
+
+/* ===== CUSTOM SCROLLBAR STYLING ===== */
+/* Webkit browsers (Chrome, Safari, Edge) */
+#controls-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+#controls-panel::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+#controls-panel::-webkit-scrollbar-thumb {
+    background: rgba(0, 102, 255, 0.5); /* Blue thumb */
+    border-radius: 4px;
+}
+
+#controls-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 102, 255, 0.7); /* Brighter on hover */
+}
+
+/* ===== FORMAT SWITCH BUTTONS ===== */
+/* Container for GLTF/GLB toggle buttons */
+.format-switch {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* Individual format button styling */
+.format-btn {
+    flex: 1; /* Equal width for both buttons */
+    padding: 12px 20px;
+    border: 2px solid #444;
+    background: #222;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease; /* Smooth hover effect */
+}
+
+/* Hover state for format buttons */
+.format-btn:hover {
+    background: #333;
+    border-color: #666;
+}
+
+/* Active state for currently selected format */
+.format-btn.active {
+    background: #0066ff; /* Blue background */
+    border-color: #0066ff;
+    box-shadow: 0 0 15px rgba(0, 102, 255, 0.5); /* Glowing effect */
+}
+
+/* ===== STATISTICS PANEL ===== */
+#stats-panel h3 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    border-bottom: 2px solid #444;
+    padding-bottom: 10px;
+}
+
+/* Two-column layout for GLTF vs GLB comparison */
+.stats-comparison {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.stat-column {
+    flex: 1;
+}
+
+.stat-column h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #0066ff;
+    text-transform: uppercase;
+}
+
+/* Individual stat row (label + value) */
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #333;
+    font-size: 12px;
+}
+
+.stat-label {
+    color: #aaa; /* Gray label text */
+}
+
+.stat-value {
+    color: #fff; /* White value text */
+    font-weight: bold;
+}
+
+/* Format information text section */
+.format-info {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px solid #444;
+}
+
+.format-info p {
+    margin: 8px 0;
+    font-size: 11px;
+    color: #aaa;
+    line-height: 1.4;
+}
+
+.format-info strong {
+    color: #0066ff; /* Blue emphasis */
+}
+
+/* ===== LIGHTING CONTROLS PANEL ===== */
+#lighting-panel {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #444;
+}
+
+#lighting-panel h3 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    border-bottom: 2px solid #444;
+    padding-bottom: 10px;
+}
+
+/* Container for each light type (ambient or directional) */
+.light-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05); /* Subtle background highlight */
+    border-radius: 8px;
+}
+
+.light-section h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    color: #ffaa00;
+    text-transform: uppercase;
+}
+
+.control-group {
+    margin-bottom: 12px;
+}
+
+.control-group label {
+    display: block;
+    font-size: 12px;
+    color: #aaa;
+    margin-bottom: 6px;
+}
+
+.control-group input[type="range"] {
+    width: 60%;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.control-group input[type="color"] {
+    width: 50px;
+    height: 30px;
+    border: 2px solid #444;
+    border-radius: 4px;
+    cursor: pointer;
+    background: transparent;
+}
+
+.control-group span {
+    font-size: 12px;
+    color: #fff;
+    font-weight: bold;
+    min-width: 30px;
+    display: inline-block;
+}
+
+.position-controls {
+    margin-top: 8px;
+}
+
+.axis-control {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    gap: 8px;
+}
+
+.axis-control span:first-child {
+    min-width: 20px;
+    color: #aaa;
+    font-size: 12px;
+}
+
+.axis-control input[type="range"] {
+    flex: 1;
+    margin: 0;
+}
+
+.axis-control span:last-child {
+    min-width: 35px;
+    text-align: right;
+}
+
+.reset-btn {
+    width: 100%;
+    padding: 10px;
+    background: #ff6600;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.3s ease;
+}
+
+.reset-btn:hover {
+    background: #ff8833;
+    box-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #controls-panel {
+        top: 10px;
+        right: 10px;
+        min-width: 280px;
+        max-width: 320px;
+        padding: 15px;
+    }
+    
+    .stats-comparison {
+        flex-direction: column;
+        gap: 15px;
+    }
+}

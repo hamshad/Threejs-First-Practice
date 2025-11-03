@@ -98,6 +98,27 @@
 				</div>
 			</div>
 			
+			<!-- Animation Controls Panel - Play/pause and control model animations -->
+			<div id="animation-panel">
+				<h3>Animation Controls</h3>
+				
+				<div id="animation-info">
+					<p id="animation-status">No animations found in model</p>
+				</div>
+				
+				<div class="animation-controls">
+					<button id="play-pause-btn" class="control-btn" disabled>
+						<span id="play-pause-icon">▶</span> Play/Pause
+					</button>
+					
+					<div class="control-group">
+						<label for="animation-speed">Speed:</label>
+						<input type="range" id="animation-speed" min="0" max="2" step="0.1" value="1" disabled>
+						<span id="animation-speed-value">1.0x</span>
+					</div>
+				</div>
+			</div>
+			
 			<!-- Lighting Controls Panel - Manual adjustment of scene lighting -->
 			<div id="lighting-panel">
 				<h3>Lighting Controls</h3>

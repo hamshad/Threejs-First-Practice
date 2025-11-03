@@ -46,6 +46,11 @@ let controls; // OrbitControls instance for interactive camera movement
 let currentFormat = 'gltf'; // Track which format is currently loaded ('gltf' or 'glb')
 let loadedModel = null; // Reference to the currently loaded model for easy removal
 
+// Animation system variables
+let mixer = null; // AnimationMixer to control model animations
+let clock = new THREE.Clock(); // Clock for tracking animation time
+let animations = []; // Array to store available animations
+
 // Initialize UI event listeners for buttons and sliders
 setupUI();
 
@@ -71,11 +76,26 @@ function loadModel(format) {
     loadedModel = null;
   }
   
+  // Stop and clear previous animations
+  if (mixer) {
+    mixer.stopAllAction();
+    mixer = null;
+  }
+  animations = [];
+  
   // Load new model using the helper function from ModelHelper.js
   LoadGLTFByPath(scene, format)
     .then((result) => {
       // Store reference to the loaded model for future removal
       loadedModel = result.gltf.scene;
+      
+      // Set up animations if the model has any
+      if (result.gltf.animations && result.gltf.animations.length > 0) {
+        setupAnimations(result.gltf);
+        updateAnimationUI(true);
+      } else {
+        updateAnimationUI(false);
+      }
       
       // Set up or retrieve camera from the model
       retrieveListOfCameras(scene);
@@ -127,6 +147,71 @@ function setupUI() {
   
   // Initialize all lighting control sliders and inputs
   setupLightingControls();
+  
+  // Initialize animation control buttons
+  setupAnimationControls();
+}
+
+/**
+ * Set up animation control event listeners
+ * Handles play/pause and speed controls for model animations
+ */
+function setupAnimationControls() {
+  const playPauseBtn = document.getElementById('play-pause-btn');
+  const speedSlider = document.getElementById('animation-speed');
+  const speedValue = document.getElementById('animation-speed-value');
+  
+  let isPlaying = true;
+  
+  // Play/Pause button click handler
+  playPauseBtn.addEventListener('click', () => {
+    if (!mixer) return;
+    
+    if (isPlaying) {
+      // Pause all animations
+      mixer.timeScale = 0;
+      playPauseBtn.style.background = '#cc6600';
+      isPlaying = false;
+    } else {
+      // Resume animations
+      const speed = parseFloat(speedSlider.value);
+      mixer.timeScale = speed;
+      playPauseBtn.style.background = '#00aa00';
+      isPlaying = true;
+    }
+  });
+  
+  // Animation speed slider
+  speedSlider.addEventListener('input', (e) => {
+    const speed = parseFloat(e.target.value);
+    speedValue.textContent = speed.toFixed(1) + 'x';
+    
+    if (mixer && isPlaying) {
+      mixer.timeScale = speed;
+    }
+  });
+}
+
+/**
+ * Update animation UI based on whether animations are available
+ * @param {boolean} hasAnimations - Whether the model has animations
+ */
+function updateAnimationUI(hasAnimations) {
+  const statusText = document.getElementById('animation-status');
+  const playPauseBtn = document.getElementById('play-pause-btn');
+  const speedSlider = document.getElementById('animation-speed');
+  
+  if (hasAnimations) {
+    statusText.textContent = `${animations.length} animation(s) found and playing`;
+    statusText.style.color = '#00ff00';
+    playPauseBtn.disabled = false;
+    speedSlider.disabled = false;
+  } else {
+    statusText.textContent = 'No animations found in model';
+    statusText.style.color = '#aaa';
+    playPauseBtn.disabled = true;
+    speedSlider.disabled = true;
+  }
 }
 
 /**
@@ -257,6 +342,38 @@ function updateStats() {
     document.getElementById('glb-triangles').textContent = stats.glb.triangles.toLocaleString();
     document.getElementById('glb-meshes').textContent = stats.glb.meshes;
   }
+}
+
+/**
+ * Set up animation system for animated models
+ * @param {Object} gltf - The loaded GLTF object containing animations
+ * 
+ * Creates an AnimationMixer and plays all animations found in the model
+ */
+function setupAnimations(gltf) {
+  // Create an animation mixer for the loaded model
+  mixer = new THREE.AnimationMixer(gltf.scene);
+  
+  // Store animations for reference
+  animations = gltf.animations;
+  
+  console.log(`Found ${animations.length} animation(s) in the model:`);
+  
+  // Play all animations found in the model
+  animations.forEach((clip, index) => {
+    console.log(`  - Animation ${index + 1}: "${clip.name}" (${clip.duration.toFixed(2)}s)`);
+    
+    // Create an action from the animation clip
+    const action = mixer.clipAction(clip);
+    
+    // Configure the animation to loop infinitely
+    action.loop = THREE.LoopRepeat;
+    
+    // Start playing the animation
+    action.play();
+  });
+  
+  console.log('All animations are now playing');
 }
 
 /**
@@ -396,6 +513,14 @@ function updateCameraAspect(camera) {
 function animate() {
   // Request the next frame (creates ~60fps loop)
   requestAnimationFrame(animate);
+
+  // Get time delta for smooth animation regardless of frame rate
+  const delta = clock.getDelta();
+  
+  // Update animation mixer if animations are playing
+  if (mixer) {
+    mixer.update(delta);
+  }
 
   // Update OrbitControls for smooth damping effect
   if (controls) {

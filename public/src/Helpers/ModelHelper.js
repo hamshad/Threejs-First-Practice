@@ -28,14 +28,14 @@ let modelStats = {
  */
 export const LoadGLTFByPath = (scene, format = 'gltf') => {
   currentFormat = format;
-  
+
   // Determine which file to load based on format
-  const scenePath = format === 'gltf' ? '/public/models/scene.gltf' : '/public/models/scene.glb';
-  
+  const scenePath = format === 'gltf' ? '/public/models/scene.gltf' : '/public/models/scene-2.glb';
+
   return new Promise((resolve, reject) => {
     // Record start time for performance measurement
     loadStartTime = performance.now();
-    
+
     // Create a loader instance
     const loader = new GLTFLoader();
 
@@ -43,24 +43,24 @@ export const LoadGLTFByPath = (scene, format = 'gltf') => {
     loader.load(scenePath, (gltf) => {
       // Calculate how long the load took
       const loadTime = performance.now() - loadStartTime;
-      
+
       // Initialize counters for model statistics
       let vertices = 0;
       let triangles = 0;
       let meshes = 0;
-      
+
       // Traverse the loaded model to gather geometry statistics
       gltf.scene.traverse((object) => {
         if (object.isMesh) {
           meshes++; // Count number of mesh objects
-          
+
           if (object.geometry) {
             // Count vertices from position attribute
             const positionAttribute = object.geometry.attributes.position;
             if (positionAttribute) {
               vertices += positionAttribute.count;
             }
-            
+
             // Count triangles from index buffer or position count
             if (object.geometry.index) {
               // Indexed geometry: 3 indices per triangle
@@ -72,7 +72,7 @@ export const LoadGLTFByPath = (scene, format = 'gltf') => {
           }
         }
       });
-      
+
       // Store statistics for this format
       modelStats[format] = {
         loadTime: loadTime.toFixed(2), // Round to 2 decimal places
@@ -80,24 +80,24 @@ export const LoadGLTFByPath = (scene, format = 'gltf') => {
         triangles: Math.floor(triangles), // Round down to integer
         meshes: meshes
       };
-      
+
       // Add the loaded model to the scene
       scene.add(gltf.scene);
 
       // Resolve promise with model and stats
       resolve({ gltf, stats: modelStats[format] });
-    }, 
-    (progress) => {
-      // Progress callback - track file size during download
-      if (progress.total > 0) {
-        // Convert bytes to kilobytes
-        modelStats[format].fileSize = (progress.total / 1024).toFixed(2);
-      }
-    }, 
-    (error) => {
-      // Error callback - reject promise if loading fails
-      reject(error);
-    });
+    },
+      (progress) => {
+        // Progress callback - track file size during download
+        if (progress.total > 0) {
+          // Convert bytes to kilobytes
+          modelStats[format].fileSize = (progress.total / 1024).toFixed(2);
+        }
+      },
+      (error) => {
+        // Error callback - reject promise if loading fails
+        reject(error);
+      });
   });
 };
 
